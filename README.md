@@ -23,6 +23,7 @@ It will write the extracted files into a folder, that is named after the file yo
 
 # Supported formats and platforms
 This tool was tested for Windows 10, but in theory, it should also work down to Windows 7. There is currently no MAC or Linux version available.
+It's a 32bit application, which also works on 64bit Operatin systems.
 
 In it's current version it is mainly focused on the game Titanic: Adventure out of time, which was made with DreamFactory version 4.0.
 You can also view the compatibility with the tool by clicking on "Info" in the upper menue bar.
