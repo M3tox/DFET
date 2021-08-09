@@ -28,13 +28,21 @@ In it's current version it is mainly focused on the game Titanic: Adventure out 
 You can also view the compatibility with the tool by clicking on "Info" in the upper menue bar.
 
 Files you can currently extract:
+
 11K
+
 BOOTFILE
+
 MOV (Titanic: Adventure out of time only)
+
 PUP
+
 SET (Titanic: Adventure out of time only)
+
 SFX
+
 STG
+
 TRK
 
 # Extraction
@@ -52,5 +60,7 @@ For those who want to get more details about the files or want to do further ope
 
 # Thank you
 I want to thank the community to keep motivating me to push this project forward.
+
 Although he never responded to my messages, I want to thank MRXstudios to publish his work. [This article](https://mrxstudios.home.blog/2021/03/05/reverse-engineering-dust-uncovering-game-scripts/) inspired me to start working on DFET and I may have never started it, without reading this.
+
 I also want to thank Serena Barett and Jasper Carmack from the THG Discord server for testing the tool on their machines and their feedback.
