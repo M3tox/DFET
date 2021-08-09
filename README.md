@@ -10,7 +10,7 @@ The tool is very straight forward and does not require any programming experienc
 
 In the upper menue you can view the supported formats and the version by clicking on "Info". Under "File" you can extract or close the application. It also supports hotkeys. Press alt, then navigate to File with F and hit X to extract or C to close.
 
-On the left you see the extraction parameters, which should be self explaining. If you just want to extract the for example audio, you can do so by only tic the "Audio" box. If you want to extract everything, keep all tic boxes activated.
+On the left you see the extraction parameters, which should be self explaining. If you just want to extract the audio for example, you can do so by only tic the "Audio" box. If you want to extract everything, keep all tic boxes activated.
 
 Below you can change the default output location. This is the location where the extracted files will be written to. If you don't use this, it will extract the files to the same location where the files to extract are. If you extract the files directly from the CD, you must use this option, because it can obviously not write onto a CD and there is currently no error message indicating that.
 Use the button "Change Path" to select the folder where you want the files to extract to, unless you keep the default location.
