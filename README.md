@@ -59,6 +59,9 @@ Also it seems like the puppet files have 3D data. Those are not going to be extr
 # Development mode
 For those who want to get more details about the files or want to do further operations, you can start the devopment mode by using "-dev" as start parameter. The development mode has no user interface and is completely text based, which means all operations are via the default console. However, if you just want to extract the files, you won't need this. All it does is giving an additional tool set for developers.
 
+# Known issues
+It is a pre-release, so the tool is not 100% perfect, although it is already very advanced in what it can read and output. There may be still containers, that are not detected correctly. Also I noticed when extracting SET frames, that there can be issues with exterior sets. Sometimes the frames are just black, sometimes there are weird artifacts, but most SETs extract just fine, atleast those I have checked. The tool is already very robust, but there is still the possibility that it will crash when extracting certain files, especially if you try to extract content that is not based on DreamFactory version 4.0. Puppet files will need some more attention, because they contain frames and 3D data that can't be extracted yet.
+
 # Thank you
 I want to thank the community to keep motivating me to push this project forward.
 
