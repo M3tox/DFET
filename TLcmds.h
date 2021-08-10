@@ -1,4 +1,7 @@
 /*
+COPYRIGHT MeToX
+GPL-3.0 License 
+
 This file is used to output the Scripts correctly.
 Every command has its own ID within the script containers.
 */
