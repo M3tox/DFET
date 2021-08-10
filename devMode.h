@@ -1,3 +1,14 @@
+/*
+COPYRIGHT MeToX
+GPL-3.0 License 
+ 
+The development mode allows the user to do more advanced operations.
+Files can be splitten into their individual containers,
+files can be analyzed or other information can be outputted to screen
+
+Every general user, who just want to extract the games content won't need this.
+*/
+
 #pragma once
 
 inline static bool printLastError(DFextractor& file) {
