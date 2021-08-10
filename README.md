@@ -2,7 +2,7 @@
 DFET or "DreamFactory Extraction Tool" allows you to extract data from games that were made with the DreamFactory engine up to version 4.0.
 However, the development was mainly focused on the game "Titanic: Adventure out of time", but it partially also supports the game "DUST: A tale of the wired west", which is based on an older version.
 
-You can download the Tool [HERE](https://github.com/M3tox/DFET/releases/download/0.70/DFET.exe).
+You can download the Tool [HERE](https://github.com/M3tox/DFET/releases/tag/0.71).
 
 # Usage
 The tool is very straight forward and does not require any programming experience. Once you have started it up it should look like this:
