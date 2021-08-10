@@ -8,7 +8,7 @@ You can download the Tool [HERE](https://github.com/M3tox/DFET/releases/download
 The tool is very straight forward and does not require any programming experience. Once you have started it up it should look like this:
 ![grafik](https://user-images.githubusercontent.com/75583358/128694060-2675db4e-9553-4ce1-8f4b-4a0ea6324464.png)
 
-In the upper menue you can view the supported formats and the version by clicking on "Info". Under "File" you can extract or close the application. It also supports hotkeys. Press alt, then navigate to File with F and hit X to extract or C to close.
+In the upper menu you can view the supported formats and the version by clicking on "Info". Under "File" you can extract or close the application. It also supports hotkeys. Press alt, then navigate to File with F and hit X to extract or C to close.
 
 On the left you see the extraction parameters, which should be self explaining. If you just want to extract the audio for example, you can do so by only tic the "Audio" box. If you want to extract everything, keep all tic boxes activated.
 
@@ -22,49 +22,42 @@ After the extraction you should see an extraction report, like this:
 It will write the extracted files into a folder, that is named after the file you have selected, but with a _ before. E.g.: "CONTROL.SET" -> "_CONTROL".
 
 # Supported formats and platforms
-This tool was tested for Windows 10, but in theory, it should also work down to Windows 7. There is currently no MAC or Linux version available.
-It's a 32bit application, which also works on 64bit Operatin systems.
-
-In it's current version it is mainly focused on the game Titanic: Adventure out of time, which was made with DreamFactory version 4.0.
-You can also view the compatibility with the tool by clicking on "Info" in the upper menue bar.
+This tool was tested for Windows 10, but in theory, it should also work down to Windows 7. I was informed that it also works on the new Windows 11. There is currently no MAC or Linux version available.
+It's a 32bit application, which also works on 64bit operating systems.
 
 Files you can currently extract:
 
-11K
+- 11K
+- BOOTFILE
+- MOV (Titanic: Adventure out of time only)
+- PUP
+- SET (Titanic: Adventure out of time only)
+- SFX
+- STG
+- TRK
 
-BOOTFILE
-
-MOV (Titanic: Adventure out of time only)
-
-PUP
-
-SET (Titanic: Adventure out of time only)
-
-SFX
-
-STG
-
-TRK
+You can also view this list with the tool, by clicking on "Info" in the upper menu bar.
 
 # Extraction
 Now, what can you actually get out of these files? Depending to your selection in the Extraction parameters (the tic boxes), you can extract:
-Scripts
-Audio
-Frames
+- Scripts
+- Audio
+- Frames
 
-Keep in mind that this tool is not 100% perfect. There is still data that currently can't be extracted.
+Keep in mind that there is still data that currently can't be extracted.
 For example puppet frames are not supported in this current version.
+What are puppet frames? It is what I call the facial images you see when you interact with a character, when you talk to them. Evey facial expression has its own set of images and a table, that defines how they are going to be animated, so in which order graphics like mouth open, mouth closed, eyes closed etc. will be drawn.
 Also it seems like the puppet files have 3D data. Those are not going to be extracted any time soon, atleast not by this tool.
 
 # Development mode
-For those who want to get more details about the files or want to do further operations, you can start the devopment mode by using "-dev" as start parameter. The development mode has no user interface and is completely text based, which means all operations are via the default console. However, if you just want to extract the files, you won't need this. All it does is giving an additional tool set for developers.
+For those who want to get more details about the files or want to do further operations, you can start the development mode by using "-dev" as start parameter. The development mode has no user interface and is completely text based, which means all operations are via the default console. However, if you just want to extract the files, you won't need this. All it does is giving an additional tool set for developers, like analyzing files, or splitting them into their individual containers.
 
 # Known issues
-It is a pre-release, so the tool is not 100% perfect, although it is already very advanced in what it can read and output. There may be still containers, that are not detected correctly. Also I noticed when extracting SET frames, that there can be issues with exterior sets. Sometimes the frames are just black, sometimes there are weird artifacts, but most SETs extract just fine, atleast those I have checked. The tool is already very robust, but there is still the possibility that it will crash when extracting certain files, especially if you try to extract content that is not based on DreamFactory version 4.0. Puppet files will need some more attention, because they contain frames and 3D data that can't be extracted yet.
+It is a pre-release, so the tool by far not perfect, although it is already very advanced in what it can read and output. There may be still containers, that are not detected correctly. Also I noticed when extracting SET frames, that there can be issues with some of the bigger sets. Sometimes the frames are just black, sometimes there are weird artifacts, but most SETs extract just fine, atleast those I have checked. The tool is already very robust, but there is still the possibility that it will crash when extracting certain files, especially if you try to extract content that is not based on DreamFactory version 4.0.
 
 # Thank you
 I want to thank the community to keep motivating me to push this project forward.
 
-Although he never responded to my messages, I want to thank MRXstudios to publish his work. [This article](https://mrxstudios.home.blog/2021/03/05/reverse-engineering-dust-uncovering-game-scripts/) inspired me to start working on DFET and I may have never started it, without reading this.
+Although he never responded to my messages, I want to thank MRXstudios to publish his work. [This blog](https://mrxstudios.home.blog/2021/03/05/reverse-engineering-dust-uncovering-game-scripts/) inspired me to start working on DFET and I may have never started it, without reading this.
 
 I also want to thank Serena Barett and Jasper Carmack from the THG Discord server for testing the tool on their machines and their feedback.
