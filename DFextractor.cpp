@@ -1604,8 +1604,7 @@ bool DFextractor::audioDecoder(int32_t& uncomprBlockSize, int8_t* soundFile, int
 				tmpResult = resultOutput;
 
 				do {
-					byteRead = *PointerToFilePos;
-					PointerToFilePos = PointerToFilePos + 1;
+					byteRead = *PointerToFilePos++;
 					step = (int16_t)indexParam + (int16_t)StepSizeTable[(uint8_t)byteRead];
 					resultOutput = (uint32_t *)((int32_t)tmpResult + 2);
 					*(int8_t *)tmpResult = (int8_t)step + 0x40;
