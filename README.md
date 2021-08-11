@@ -47,13 +47,13 @@ Now, what can you actually get out of these files? Depending to your selection i
 Keep in mind that there is still data that currently can't be extracted.
 For example puppet frames are not supported in this current version.
 What are puppet frames? It is what I call the facial images you see when you interact with a character, when you talk to them. Evey facial expression has its own set of images and a table, that defines how they are going to be animated, so in which order graphics like mouth open, mouth closed, eyes closed etc. will be drawn.
-Also it seems like the puppet files have 3D data. Those are not going to be extracted any time soon, atleast not by this tool.
+Also it seems like the puppet files have 3D data. Those are not going to be extracted any time soon, at least not by this tool.
 
 # Development mode
 For those who want to get more details about the files or want to do further operations, you can start the development mode by using "-dev" as start parameter. The development mode has no user interface and is completely text based, which means all operations are via the default console. However, if you just want to extract the files, you won't need this. All it does is giving an additional tool set for developers, like analyzing files, or splitting them into their individual containers.
 
 # Known issues
-It is a pre-release, so the tool by far not perfect, although it is already very advanced in what it can read and output. There may be still containers, that are not detected correctly. Also I noticed when extracting SET frames, that there can be issues with some of the bigger sets. Sometimes the frames are just black, sometimes there are weird artifacts, but most SETs extract just fine, atleast those I have checked. The tool is already very robust, but there is still the possibility that it will crash when extracting certain files, especially if you try to extract content that is not based on DreamFactory version 4.0.
+It is a pre-release, so the tool by far not perfect, although it is already very advanced in what it can read and output. There may be still containers, that are not detected correctly. Also I noticed when extracting SET frames, that there can be issues with some of the bigger sets. Sometimes the frames are just black, sometimes there are weird artifacts, but most SETs extract just fine, at least those I have checked. The tool is already very robust, but there is still the possibility that it will crash when extracting certain files, especially if you try to extract content that is not based on DreamFactory version 4.0.
 
 # Thank you
 I want to thank the community to keep motivating me to push this project forward.
