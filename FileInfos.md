@@ -51,7 +51,7 @@ Also I do believe that these puppet files contain 3D data with texture and 3D an
 # .SET
 If you know a bit the history of Cyberflix you know that they had that vision of making interactive games, but with a story like being in a movie.
 Now the Sets are going with this movie idea. Every Set has multiple Scenes and every Scenes have multiple views.
-The Sets are essentially the rooms or sections. The Scenes are the points within the Scene you an transfer to and the views are the individual frames you see when turning around.
+The Sets are essentially the rooms or sections. The Scenes are the points within the Scene you can transfer to and the views are the individual frames you see when turning around.
 As you probably already noticed, the game is not really in 3D (except the puppets, kinda).
 All the rooms and the entire environment was pre-rendered in order to allow maximum amount of details.
 Back in 1996 it was absolutely impossible to render graphics like this in real-time. This is also the reason why the player is so limited in walking around
