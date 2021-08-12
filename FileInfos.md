@@ -14,7 +14,7 @@ but when I changed this (also in the steam version) I don't hear any noticeable 
 
 The images or frames are not splitten over multiple containers, so each frame has its own container.
 Once again a compressed, custom file format was used and I have never seen something like this before.
-I managed to write an algorithm that works for 99% of the frames, because a few are just black, or have weird artefacts.
+I managed to write an algorithm that works for 99% of the frames. Unfortunately a few are just black, or have weird artefacts.
 Once the container is decompressed, you have data where every pixel represents one byte, which is very similar to a 8bit Bitmap.
 But to construct the bitmap I had to add the color information as well. The color palette can be find in the very first container and is valid for the whole file.
 The tool will then flip the image when writing the Bitmap, pulls in the color information and there you have it.
