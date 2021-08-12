@@ -2,7 +2,7 @@ Here you can find additional information about the files you can select and extr
 
 # Extracted files
 If you have used it already, you will notice that all audio files are in WAVE(.wav) format, the images are Bitmap(.bmp) and the scripts are text(.txt).
-Now first of all, this is not how these files are actually defined in the containers. Shocking, I know, but in fact, these files are how I have reinterpreted them.
+Now first of all, this is not how these extracted file formats are actually defined in the game files. Shocking, I know, but in fact, these files are how I have reinterpreted them.
 DFET will convert them in the moment you are going to extract the content and I am glad that I managed to optimize it enough that this whole process takes only a blink of a second.
 I can't tell what the original format was, but since the developers loved Apple computers, I can imagine they used typical apple file formats to feed the engine with.
 
