@@ -61,7 +61,7 @@ I programmed it in a way that it will sort the scenes into individual subfolders
 The transition frames to go from one scene to another will be put into the "W" folder. The real structure is different, but I thought that it is much easier like this for most users.
 
 # .SFX
-Another audio archive. As you can probably already say by the name, those hold sound effects. Usually very short audio files come out of this.
+Another audio archive. As you can probably already tell by the name, those hold sound effects. Usually very short audio files come out of this.
 
 # .STG
 These files hold scripts and images, like UI elements or images from the mini games. For example the deckplan can be extracted from a STG file as well.
