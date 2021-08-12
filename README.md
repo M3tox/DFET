@@ -37,6 +37,7 @@ Files you can currently extract:
 - TRK
 
 You can also view this list with the tool, by clicking on "Info" in the upper menu bar.
+If you want more detailed information about this you can click [HERE](https://github.com/M3tox/DFET/blob/main/FileInfos.md).
 
 # Extraction
 Now, what can you actually get out of these files? Depending to your selection in the Extraction parameters (the tic boxes), you can extract:
