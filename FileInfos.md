@@ -57,6 +57,8 @@ All the rooms and the entire environment was pre-rendered in order to allow maxi
 Back in 1996 it was absolutely impossible to render graphics like this in real-time. This is also the reason why the player is so limited in walking around
 and why everything looks so... static, because you are looking at static pictures. If you see motion, like puppets walking around, those are drawn on top of the images.
 However: With DFET you can extract all the set frames, also the transition or rotation frames. Usually you don't see them because of the fast movement.
+I programmed it in a way that it will sort the scenes into individual subfolders. It will output left turns into the "A" folder, right turns into the "D" folder.
+The transition frames to go from one scene to another will be put into the "W" folder. The real structure is different, but I thought that it is much easier like this for most users.
 
 # .SFX
 Another audio archive. As you can probably already say by the name, those hold sound effects. Usually very short audio files come out of this.
