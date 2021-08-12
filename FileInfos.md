@@ -4,7 +4,7 @@ Here you can find additional information about the files you can select and extr
 If you have used it already, you will notice that all audio files are in WAVE(.wav) format, the images are Bitmap(.bmp) and the scripts are text(.txt).
 Now first of all, this is not how they are actually defined in the game files. Shocking, I know, but in fact, these files are how I have reinterpreted them.
 DFET will convert them in the moment you are going to extract the content and I am glad that I managed to optimize it enough that this whole process takes only a blink of a second.
-I can't tell what the original format was, but since the developers loved Apple computers, I can imagine they used typical apple file formats to feed the engine with.
+I can't tell what the original format was *before* it went into the engine, but since the developers loved Apple computers, I can imagine they used typical apple file formats to feed the engine with.
 
 The audio is splitten over several containers, while each container mostly does not exceeds the size of 2^16 bytes.
 Each audio container is lossy compressed. Their default format is similar to ADPCM, but it is still different.
