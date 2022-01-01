@@ -610,6 +610,7 @@ bool DFextractor::writeFrame(const std::string& path, int32_t blockID, bool brig
 
 
 							if (heightRest)	continue;
+							breakOut = true;
 							break;
 						case 8:		// to 41DEB
 							lookUpOffset = width * 4;	// 4x = ebp-18
