@@ -161,7 +161,7 @@ bool DFextractor::readFileToBlocks(const char* file) {
 	if (fileToRead.good()) {
 
 		fileToRead.read((char*)&hd, sizeof(hd));
-		//hd.blockCount /= 2;
+
 		fileToRead.seekg(1024);
 
 		blockOffsets = new int32_t[hd.blockCount];
@@ -192,8 +192,6 @@ bool DFextractor::readFileToBlocks(const char* file) {
 
 					fileToRead.read((char*)&fileBlock[bli].blockID, sizeof(fileBlock[bli].blockID));
 					fileToRead.read((char*)&fileBlock[bli].blockLength, sizeof(fileBlock[bli].blockLength));
-					// block length seems to be 24 bytes longer than indicated for some...atleast for block zero
-					fileBlock[bli].blockLength += 24 - 12; // actually its 12 extra bytes...
 					fileBlock[bli].blockdata = new char[fileBlock[bli].blockLength];
 					fileToRead.read(fileBlock[bli].blockdata, fileBlock[bli].blockLength);
 				}
@@ -220,12 +218,9 @@ bool DFextractor::readFileToBlocks(const char* file) {
 				else {
 					// same as default reading, might want to improve in the future
 					fileToRead.seekg(blockOffsets[bli]);
-					int test = fileToRead.tellg();
 
 					fileToRead.read((char*)&fileBlock[bli].blockID, sizeof(fileBlock[bli].blockID));
 					fileToRead.read((char*)&fileBlock[bli].blockLength, sizeof(fileBlock[bli].blockLength));
-					// block length seems to be 24 bytes longer than indicated for some...atleast for block zero
-					fileBlock[bli].blockLength += 24 - 12; // actually its 12 extra bytes...
 					fileBlock[bli].blockdata = new char[fileBlock[bli].blockLength];
 					fileToRead.read(fileBlock[bli].blockdata, fileBlock[bli].blockLength);
 				}
@@ -238,9 +233,7 @@ bool DFextractor::readFileToBlocks(const char* file) {
 				fileToRead.seekg(blockOffsets[bli]);
 
 				fileToRead.read((char*)&fileBlock[bli].blockID, sizeof(fileBlock[bli].blockID));
-				fileToRead.read((char*)&fileBlock[bli].blockLength, sizeof(fileBlock[bli].blockLength));
-				// block length seems to be 24 bytes longer than indicated for some...atleast for block zero
-				fileBlock[bli].blockLength += 24 - 12; // actually its 12 extra bytes...
+				fileToRead.read((char*)&fileBlock[bli].blockLength, sizeof(fileBlock[bli].blockLength));				
 				fileBlock[bli].blockdata = new char[fileBlock[bli].blockLength];
 				fileToRead.read(fileBlock[bli].blockdata, fileBlock[bli].blockLength);
 
