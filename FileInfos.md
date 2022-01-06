@@ -27,12 +27,12 @@ If the command takes strings instead of integers, those are defined in the botto
 # .11K
 These files are audio archives. They usually hold songs but in a much shorter version. The long, regular versions are in the .TRK files.
 You would think that 11K indicates that those are in 11025Hz, but this is not the case.
-I can only assume that the engine would pick 11K files over TRK files, if it detects insufficient RAM, which was much, MUCH lesser in 1996 than today.
+The BOOTFILE defines if the 11K or TRK files should be used based on the systems memory. If the game detects less than 6000 KB of RAM, it will choose 11K. If you are younger you might think this number is a typo. 6000 KB? Thats not even 6 MB of RAM! Yep, but this game is from 1996 where RAM was MUCH lesser than today.
 Game companies always had to look for solutions to make their games also compatibile on slower machines.
 
 # BOOTFILE
 This is probably not too exciting for you. There is at least one BOOTFILE in every game that was made with DreamFactory.
-It contains at least one script that defines which assets or which content the game has to start with, what it will load and how things work together.
+It contains at least one script that defines which assets or which content the game has to start with, what it will load when and how things work together.
 
 # .MOV
 This format is a little bit of an allrounder archive. It can be literally anything. Either it holds just one image of an object you can inspect or
@@ -46,25 +46,30 @@ This splitting was necessary in order to distribute them over the two CDs the ga
 These files contain the text that is necessary to talk to them, as well as the scripts that defines the conversation logic.
 They also contain the audio that is used for their text and each text element has its own table that defines their facial animation.
 DFET can currently not extract their facial frames like open eyes, closed eyes, closed mouth, open mouth etc. etc., but I am sure that they are also there.
-Also I do believe that these puppet files contain 3D data with texture and 3D animation for their exterior model.
+Their exterior model is probably a set of different sprites, that scales up and down depending how close it is to you. The distance is calculated with an additional Z frame in the .SET file. Seee below for more infos.
 
 # .SET
 If you know a bit the history of Cyberflix you know that they had that vision of making interactive games, but with a story like being in a movie.
 Now the Sets are going with this movie idea. Every Set has multiple Scenes and every Scenes have multiple views.
 The Sets are essentially the rooms or sections. The Scenes are the points within the Scene you can transfer to and the views are the individual frames you see when turning around.
-As you probably already noticed, the game is not really in 3D (except the puppets, kinda).
+As you probably already noticed, the game is not really in 3D.
 All the rooms and the entire environment was pre-rendered in order to allow maximum amount of details.
 Back in 1996 it was absolutely impossible to render graphics like this in real-time. This is also the reason why the player is so limited in walking around
 and why everything looks so... static, because you are looking at static pictures. If you see motion, like puppets walking around, those are drawn on top of the images.
+Here you can see the layout of the lounge for example with its camera positions. The blue lines are the path the player can go. The numbers in the boxes are the scene IDs. Between the scenes you see another number, which is the amount of views.
+![CameraMovementLounge](https://user-images.githubusercontent.com/75583358/148464272-1e797730-9504-41e6-ae67-53b72c770bc5.png)
+
 However: With DFET you can extract all the set frames, also the transition or rotation frames. Usually you don't see them because of the fast movement.
 I programmed it in a way that it will sort the scenes into individual subfolders. It will output left turns into the "A" folder, right turns into the "D" folder.
-The transition frames to go from one scene to another will be put into the "W" folder. The real structure is different, but I thought that it is much easier like this for most users.
+The transition frames to go from one scene to another will be put into the "W" folder. The real structure is different, but I thought that it is much easier like this for most users. Also there is an additional Z frame. Now Z frame is very similar to a Z buffer. It contains information about the image depth for every pixel. This would also determine if a puppet would be displayed at this particular location or not. Imagine a chair standing in front of a puppet, the chair has a lower distance value than the puppet, because the chair is closer to you, so the puppets pixel wont be drawn.
+I have visualized the depth map to explain it better, just imagine darker colors are closer and I am sure it will make fully sense to you. Below that you see how the corresponding colored image looks like.
+![262_depthMap](https://user-images.githubusercontent.com/75583358/148464307-0435d674-855d-4b90-81f5-779df2927d3c.png)
 
 # .SFX
 Another audio archive. As you can probably already tell by the name, those hold sound effects. Usually very short audio files come out of this.
 
 # .STG
-These files hold scripts and images, like UI elements or images from the mini games. For example the deckplan can be extracted from a STG file as well.
+Those are Stage files, these hold scripts and images, like UI elements or images from the mini games. For example the deckplan can be extracted from a STG file as well.
 
 # .TRK
 Track files! Those contain the music of the game we love. Some of them also have sound effects and sometimes even voices. 
