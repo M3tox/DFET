@@ -45,8 +45,8 @@ In TAOOT each character has even two puppet files, if you see "1" in the filenam
 This splitting was necessary in order to distribute them over the two CDs the game was shipped out.
 These files contain the text that is necessary to talk to them, as well as the scripts that defines the conversation logic.
 They also contain the audio that is used for their text and each text element has its own table that defines their facial animation.
-DFET can currently not extract their facial frames like open eyes, closed eyes, closed mouth, open mouth etc. etc., but I am sure that they are also there.
-Their exterior model is probably a set of different sprites, that scales up and down depending how close it is to you. The distance is calculated with an additional Z frame in the .SET file. Seee below for more infos.
+DFET can currently not extract their facial frames like open eyes, closed eyes, closed mouth, open mouth etc. etc., but I know that they are also there.
+Their exterior model however is not included. Those are in the cast files, which includes sets of different prites, that scales up and down depending how close it is to you. The distance as well as blocking view elements is calculated with an additional Z frame in the .SET file. Seee below for more infos.
 
 # .SET
 If you know a bit the history of Cyberflix you know that they had that vision of making interactive games, but with a story like being in a movie.
@@ -73,6 +73,9 @@ Those are Stage files, these hold scripts and images, like UI elements or images
 
 # .SHP
 People who played "Titanic: Adventure out of time" might assume that those are "ship files". Well, this is wrong. The developers call these shop files. Usually they contain images that will be drawn on top of the background images taken from the SET files. In many cases things you can interact with and that will suddenly appear on screen, like itmes to pick up, buttons to press or doors.
+
+# .CST
+Cast files. They hold additional data for the puppets like their exterior sprites and animations (walking, idle, etc.).
 
 # .TRK
 Track files! Those contain the music of the game we love. Some of them also have sound effects and sometimes even voices. 
