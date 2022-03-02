@@ -29,6 +29,7 @@ Files you can currently extract:
 
 - 11K
 - BOOTFILE
+- CST
 - MOV (Titanic: Adventure out of time only)
 - PUP
 - SET (Titanic: Adventure out of time only)
@@ -46,9 +47,6 @@ Now, what can you actually get out of these files? Depending to your selection i
 - Frames
 
 Keep in mind that there is still data that currently can't be extracted.
-
-# Development mode
-For those who want to get more details about the files or want to do further operations, you can start the development mode by using "-dev" as start parameter. The development mode has no user interface and is completely text based, which means all operations are via the default console. However, if you just want to extract the files, you won't need this. All it does is giving an additional tool set for developers, like analyzing files, or splitting them into their individual containers.
 
 # Known issues
 It is a pre-release, so the tool by far not perfect, although it is already very advanced in what it can read and output. There may be still containers, that are not detected correctly. Also I noticed when extracting SET frames, that there can be issues with some of the bigger sets. Sometimes the frames are just black, sometimes there are weird artifacts, but most SETs extract just fine, at least those I have checked. The tool is already very robust, but there is still the possibility that it will crash when extracting certain files, especially if you try to extract content that is not based on DreamFactory version 4.0.
