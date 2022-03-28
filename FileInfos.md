@@ -72,7 +72,7 @@ Another audio archive. As you can probably already tell by the name, those hold 
 Those are Stage files, these hold scripts and images, like UI elements or images from the mini games. For example the deckplan can be extracted from a STG file as well.
 
 # .SHP
-People who played "Titanic: Adventure out of time" might assume that those are "ship files". Well, this is wrong. The developers call these shop files. Usually they contain images that will be drawn on top of the background images taken from the SET files. In many cases things you can interact with and that will suddenly appear on screen, like itmes to pick up, buttons to press or doors.
+People who played "Titanic: Adventure out of time" might assume that those are "ship files". Well, this is wrong. The developers call these shop files. Usually they contain props. Images that will be drawn on top of the background images taken from the SET files. In many cases its things you can interact with and that will suddenly appear on screen, like itmes to pick up, buttons to press or doors.
 
 # .CST
 Cast files. They hold additional data for the puppets like their exterior sprites and animations (walking, idle, etc.).
