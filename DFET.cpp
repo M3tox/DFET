@@ -4,7 +4,7 @@
 
 #include "resource.h"
 #include "Shlobj.h"
-#include "../../libs/DFfile/DFfile/DFlib.h";
+#include "libs/DFlib.h";
 //#pragma warning(disable: 4996)
 
 
