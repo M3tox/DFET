@@ -690,7 +690,7 @@ bool DFfile::audioDecoder(int32_t& uncomprBlockSize, int8_t* soundContainer, int
 	return true;
 }
 
-// Function completly rewritten since DFET version 0.90! Shorter, faster and more reliant
+// Function completly rewritten since DFET version 0.89! Shorter, faster and more reliant
 bool DFfile::getRawImageData(DFfile::Container& container, bool& zImage, int16_t& height, int16_t& width) {
 	
 	height = *(int16_t*)container.data;
