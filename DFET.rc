@@ -78,16 +78,16 @@ BEGIN
     EDITTEXT        IDC_EDIT1,7,93,142,14,ES_AUTOHSCROLL | ES_READONLY | WS_DISABLED
 END
 
-IDD_DIALOG1 DIALOGEX 0, 0, 133, 141
+IDD_DIALOG1 DIALOGEX 0, 0, 133, 163
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Info DFET"
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     LTEXT           "DF extraction tool, Version",IDC_STATIC1,10,8,114,8,SS_NOPREFIX
-    LTEXT           "Copyright (c) 2021",IDC_STATIC,10,24,114,8
-    DEFPUSHBUTTON   "OK",IDOK,76,120,50,14,WS_GROUP
+    LTEXT           "Copyright (c) 2022",IDC_STATIC,10,24,114,8
+    DEFPUSHBUTTON   "OK",IDOK,76,142,50,14,WS_GROUP
     LTEXT           "Programmed by MeToX",IDC_STATIC,10,16,114,8,SS_NOPREFIX
-    LTEXT           "Currently supported file formats:\n11k\nBOOTFILE\nMOV (TAOOT only)\nPUP (audio and scripts only)\nSET (TAOOT only)\nSFX\nSTG\nTRK",IDC_STATIC,10,43,112,72
+    LTEXT           "Currently supported file formats:\n11k\nBOOTFILE\nCST\nMOV (TAOOT only)\nPUP\nSET (TAOOT only)\nSFX\nSHP\nSND\nSTG\nTRK",IDC_STATIC,10,43,112,96
 END
 
 
@@ -112,7 +112,7 @@ BEGIN
         LEFTMARGIN, 10
         RIGHTMARGIN, 126
         TOPMARGIN, 7
-        BOTTOMMARGIN, 134
+        BOTTOMMARGIN, 156
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -164,4 +164,6 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
+
+
 
