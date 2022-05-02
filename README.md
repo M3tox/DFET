@@ -57,6 +57,6 @@ This is why you may notice a few weird things, for example why the decompressed 
 # Thank you
 I want to thank the community to keep motivating me to push this project forward.
 
-Although he never responded to my messages, I want to thank MRXstudios to publish his work. [This blog](https://mrxstudios.home.blog/2021/03/05/reverse-engineering-dust-uncovering-game-scripts/) inspired me to start working on DFET and I may have never started it, without reading this.
+I thank MRXstudios for publishing his work. [This blog](https://mrxstudios.home.blog/2021/03/05/reverse-engineering-dust-uncovering-game-scripts/) inspired me to start working on DFET and I may have never started it, without reading this.
 
 I also want to thank Serena Barett and Jasper Carmack from the THG Discord server for testing the first version of the tool (v0.70 9th Aug 2021) on their machines and their feedback.
