@@ -53,11 +53,13 @@ All the rooms and the entire environment was pre-rendered in order to allow maxi
 Back in 1996 it was absolutely impossible to render graphics like this in real-time. This is also the reason why the player is so limited in walking around, like on rails and why everything looks so... static, because you are looking at static pictures. If you see motion, like puppets walking around, those are drawn on top of the images.
 While in earlier versions like in DUST the scenes are defined by a matrix, in TAOOT every camera frame has its own position/rotation information. At this point, it is not fixed to a grid anymore, the scenes can be anywhere. Diagonal and curve transitions are also possible.
 Here you can see the layout of the TAOOT lounge with its camera positions. The blue lines are the path the player can go. The numbers in the boxes are the scene IDs. Between the scenes you see another number, which is the amount of views.
+
 ![CameraMovementLounge](https://user-images.githubusercontent.com/75583358/148464272-1e797730-9504-41e6-ae67-53b72c770bc5.png)
 
 However: With DFET you can extract all the set frames, also the transition or rotation frames. Usually you don't see them because of the fast movement. Z frames will be also extracted.
 Now a Z frame is very similar to a Z buffer. It contains information about the image depth for every pixel. This would also determine if a puppet would be displayed at this particular location or not. Imagine a chair standing in front of a puppet, the chair has a lower distance value than the puppet, because the chair is closer to you, so the puppets pixel wont be drawn.
 I have visualized the depth map to explain it better, just imagine darker colors are closer and I am sure it will make fully sense to you. Below that you see how the corresponding colored image looks like.
+
 ![262_depthMap](https://user-images.githubusercontent.com/75583358/148464307-0435d674-855d-4b90-81f5-779df2927d3c.png)
 
 # .SFX
