@@ -1,6 +1,6 @@
 # About
 DFET or "DreamFactory Extraction Tool" allows you to extract data from games that were made with the DreamFactory engine up to version 4.0.
-However, the development was mainly focused on the game "Titanic: Adventure out of time", but it partially also supports the game "DUST: A tale of the wired west", which is based on an older version.
+It can extract all file formats that are used by the game "Titanic: Adventure out of time" and its Demo. It partially also supports the game "DUST: A tale of the wired west", which is based on an older version. However, for the final version of DFET it is the goal that DUST will be also fully supported.
 
 You can download the Tool [HERE](https://github.com/M3tox/DFET/releases/tag/0.89).
 
@@ -48,14 +48,15 @@ Now, what can you actually get out of these files? Depending to your selection i
 - Audio
 - Frames
 
-Keep in mind that there is still data that currently can't be extracted.
+Keep in mind that there may be still data that currently can't be detected/extracted.
 
-# Known issues
-It is a pre-release, so the tool by far not perfect, although it is already very advanced in what it can read and output. There may be still containers, that are not detected correctly. Also I noticed when extracting SET frames, that there can be issues with some of the bigger sets. Sometimes the frames are just black, sometimes there are weird artifacts, but most SETs extract just fine, at least those I have checked. The tool is already very robust, but there is still the possibility that it will crash when extracting certain files, especially if you try to extract content that is not based on DreamFactory version 4.0.
+# Code
+Feel free to use the code for your programming projects under the GPL-3.0 License. The backend with all its DF file processing functions is a library, while DFET.cpp is just taking care of the DFET window logic. The reason for this design decision is because I have multiple projects that utilize these files for all kind of things, for example a camera controller that can capture new frames based on the SETs coordinates, or an editor called "DFedit". Since they all use the same library I can apply changes deep in the backend in every project at the same time.
+This is why you may notice a few weird things, for example why the decompressed images will be held in RAM at first and then need a secondary function to actually write it to disk. In other projects I just want to display the images instead of writing them.
 
 # Thank you
 I want to thank the community to keep motivating me to push this project forward.
 
 Although he never responded to my messages, I want to thank MRXstudios to publish his work. [This blog](https://mrxstudios.home.blog/2021/03/05/reverse-engineering-dust-uncovering-game-scripts/) inspired me to start working on DFET and I may have never started it, without reading this.
 
-I also want to thank Serena Barett and Jasper Carmack from the THG Discord server for testing the tool on their machines and their feedback.
+I also want to thank Serena Barett and Jasper Carmack from the THG Discord server for testing the first version of the tool (v0.70 9th Aug 2021) on their machines and their feedback.
