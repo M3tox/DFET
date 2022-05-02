@@ -5,7 +5,6 @@
 #include "resource.h"
 #include "Shlobj.h"
 #include "libs/DFfile/DFlib.h";
-//#pragma warning(disable: 4996)
 
 
 INT_PTR CALLBACK    mainProc(HWND, UINT, WPARAM, LPARAM);
