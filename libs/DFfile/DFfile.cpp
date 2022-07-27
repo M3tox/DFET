@@ -506,7 +506,7 @@ bool DFfile::writeAllAudioC(const std::string& path) {
 			delete[] fileSizes;
 		}
 
-		if (audioPtr->audioSingleChunkCount) {
+		
 
 			for (int32_t shot = 0; shot < audioPtr->audioSingleChunkCount; shot++) {
 
@@ -544,7 +544,7 @@ bool DFfile::writeAllAudioC(const std::string& path) {
 				file.close();
 				fileCounter++;
 			}
-		}
+		
 	}
 
 	// operation succesful
