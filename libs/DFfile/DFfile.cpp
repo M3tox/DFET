@@ -551,6 +551,8 @@ bool DFfile::writeAllAudioC(const std::string& path) {
 	return true;
 }
 
+// audio decoder decompress the file to readable DCP
+// Function was refactored after version 0.89, less allocations, less castings, easier to understand and maintain.
 bool DFfile::audioDecoder(int32_t& uncomprBlockSize, int8_t* soundContainer, int8_t* decodedOutput) {
 
 	static constexpr int8_t StepSizeTable[256]{
@@ -597,94 +599,59 @@ bool DFfile::audioDecoder(int32_t& uncomprBlockSize, int8_t* soundContainer, int
 		0xFC, 0xFD, 0xFE, 0xFF
 	};
 
-	uint16_t indexFlags;
-	uint32_t flagParams;
+	
+	int8_t* currOutput;
+	int8_t prevByte;
+	int8_t nextByte;
 
-	int8_t* blockFirstByte;
-	int8_t* PointerToFilePos;
-
-	int16_t step;
-	uint16_t index;
-	uint32_t* resultOutput;
-	uint32_t* tmpResult;
-	uint32_t indexParam;
-	//int32_t uncomprBlockSize;
-	int8_t byteRead;
-	int32_t offsetToBlock;
-
-	// check if block format is correct 00 00 01 00
+	// check if block format is correct 00 00 01 00 (sound format version 1.0)
 	if (0x00010000 != *(int32_t*)soundContainer) return false;
 
-	//blockFirstByte = soundFile;
-	blockFirstByte = soundContainer + *(int*)(soundContainer + 44);
-	//if (*blockFirstByte == 0x40) {
-	//	std::cout << "First block byte incorrect format\n";
-	//	return false;
-	//}
+	// set compressed file pointer to begin of data
+	soundContainer += *(int32_t*)(soundContainer + 44);
 
-	PointerToFilePos = blockFirstByte + 1;
-	resultOutput = (uint32_t*)(decodedOutput + 1);
-	byteRead = *blockFirstByte;
+	nextByte = *soundContainer++;
+	*decodedOutput = nextByte + 0x40;
 
-	*decodedOutput = byteRead + 0x40;
-	indexParam = (uint32_t)byteRead;
-
+	currOutput = decodedOutput + 1;
+	prevByte = nextByte;
 
 	// iterate until the known end 
-	while (resultOutput < (uint32_t*)(decodedOutput + uncomprBlockSize)) {
-		byteRead = *PointerToFilePos++;
+	while (currOutput < (decodedOutput + uncomprBlockSize)) {
+		nextByte = *soundContainer++;
 
-		// check if last bit is set
-		if ((byteRead & 0x80) == false) {
-			*(int8_t*)resultOutput = byteRead + 0x40;
-			resultOutput = (uint32_t*)((int32_t)resultOutput + 1);
-			indexParam = (uint32_t)byteRead;
+		// check if last bit is set 0
+		if ((nextByte & 0x80) == false) {
+			// MODE I: copy 1 byte directly from source and add 0x40 to it
+			*(int8_t*)currOutput++ = nextByte + 0x40;
+			prevByte = nextByte;
+		}
+		// check if second last bit is set 0
+		else if ((nextByte & 0x40) == false) {
+			// MODE II: find and write difference with step tables
+			uint8_t byteCount = nextByte & 0x3f;
+
+			do {
+				nextByte = *soundContainer++;
+				int8_t step = prevByte + StepSizeTable[(uint8_t)nextByte];
+				int8_t index = step + IndexTable[(uint8_t)nextByte];
+				
+				*currOutput++ = step + 0x40;
+				*currOutput++ = index + 0x40;
+				
+				prevByte = index;
+			} while (byteCount--);
 		}
 		else {
-			// check if second last bit is set
-			if ((byteRead & 0x40) == false) {
-				flagParams = byteRead & 0xffff003f;
-				tmpResult = resultOutput;
-
-				do {
-					byteRead = *PointerToFilePos++;
-					step = (int16_t)indexParam + (int16_t)StepSizeTable[(uint8_t)byteRead];
-					resultOutput = (uint32_t*)((int32_t)tmpResult + 2);
-					*(int8_t*)tmpResult = (int8_t)step + 0x40;
-
-					index = step + IndexTable[(uint8_t)byteRead];
-					indexParam = (uint32_t)index;
-					indexFlags = (int16_t)flagParams - 1;
-					flagParams = (uint32_t)indexFlags;
-
-					*(int8_t*)((int32_t)tmpResult + 1) = (int8_t)index + 0x40;
-					tmpResult = resultOutput;
-				} while ((int16_t)indexFlags >= 0);
-			}
-			else {
-				tmpResult = resultOutput;
-
-				indexFlags = (byteRead & 0x3f) + 1;
-				flagParams = indexParam + 0x40 & 0xff;
-
-				uint32_t subCheck1 = (uint32_t)(indexFlags >> 2);
-				uint32_t subCheck2 = flagParams | (indexParam + 0x40 & 0xff) << 8;
-
-				while (subCheck1--) {
-					*tmpResult++ = subCheck2 << 0x10 | subCheck2;
-				}
-				subCheck2 = indexFlags & 3;
-				while (subCheck2--) {
-
-					*tmpResult = (int8_t)flagParams;
-					// only step one, instead of 4
-					tmpResult = (uint32_t*)((int32_t)tmpResult + 1);
-				}
-				resultOutput = (uint32_t*)((int32_t)resultOutput + (uint32_t)indexFlags);
-			}
+			// MODE III: copy x amount from previous byte
+			uint8_t byteCount = (nextByte & 0x3f) + 1;
+			memset(currOutput, prevByte + 0x40, byteCount);
+			currOutput += byteCount;
 		}
+		
 	}
-	if (resultOutput != (uint32_t*)(decodedOutput + uncomprBlockSize)) {
+	// this container should be decoded now, check if pointer adress matches with expected
+	if (currOutput != (decodedOutput + uncomprBlockSize)) {
 		return false;
 	}
 	return true;
