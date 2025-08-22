@@ -326,8 +326,11 @@ protected:
 	// set for 8 bit mono...
 	struct waveHeader {
 
-		waveHeader(int32_t chunkSize, int32_t hertz, std::string& version)
-			: chunkSize(chunkSize + 36), sampleRate(hertz), byteRate(hertz) {
+		waveHeader(int32_t chunkSize, int32_t hertz, std::string& version, int16_t bitsPerSample = 8)
+			: chunkSize(chunkSize + 36), sampleRate(hertz), bitsPerSample(bitsPerSample),
+			blockAlign(1 * bitsPerSample / 8),
+			byteRate(hertz* (1 * bitsPerSample / 8))
+		{
 
 			// not very optimal. might optimize the constructor in the future.
 			if (version.empty())
@@ -401,8 +404,8 @@ protected:
 		const int16_t monoOrStereo{ 1 }; // 1 = Mono
 		const int32_t sampleRate; // Hertz
 		const int32_t byteRate; // sample rate * numChannels * bitsPerSample /8
-		const int16_t blockAlign{ 1 }; // number of channels * bitsPerSample / 8
-		const int16_t bitsPerSample{ 8 }; // ...
+		const int16_t blockAlign; // number of channels * bitsPerSample / 8
+		const int16_t bitsPerSample; // ...
 		//const char subChunk2ID[4]{ 'd','a','t','a' };
 		//const int32_t subChunk2Size;
 		// lit dat:
@@ -562,8 +565,8 @@ protected:
 
 	int32_t readFileIntoMemory(const std::string& fileLocation);
 
-	bool audioDecoder(int32_t& uncompressedSize, int8_t* soundFile, int8_t* decodedOutput);
-	bool getRawImageData(DFfile::Container& container, bool& zImage, int16_t& height, int16_t& width);
+	bool audioDecoder_v40(int32_t& uncompressedSize, int8_t* soundFile, int8_t* decodedOutput);
+	bool audioDecoder_v41(int32_t& uncompressedSize, int8_t* soundFile, int8_t* decodedOutput);	bool getRawImageData(DFfile::Container& container, bool& zImage, int16_t& height, int16_t& width);
 	virtual int32_t initContainerData() = 0;
 
 

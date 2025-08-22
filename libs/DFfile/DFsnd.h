@@ -62,23 +62,34 @@ public:
 				// get hertz rate from first block. 
 				int32_t hertz = *(int32_t*)(containers[chunksStart+1].data + 28);
 
+				// get codec flag from first chunk to determine format for all combined chunks
+				int16_t codec_flag = *(int16_t*)(containers[chunksStart + audioChunks[0]].data + 0x1A);
+
 				// construct audio name based on blockZero
 				std::string filname(outPutPath);
 				filname.push_back('/');
 				filname.append(audioName);
 				filname.append(".wav");
 
-				waveHeader header(totalFileSize, hertz, versionSig);
+				waveHeader header(totalFileSize, hertz, versionSig, (codec_flag == 1) ? 8 : 16);
 
 				containerDataBuffer.resize(totalFileSize + header.headerSize + 3);
 				//int8_t* toOutput = new int8_t[totalFileSize + header.headerSize + 3]; // 3 extra overflow decoder bytes
-				memcpy(containerDataBuffer.GetContent(), header.StartChunkID, header.headerSize);
+				memcpy(containerDataBuffer.GetContent(), &header, header.headerSize);
 
 				std::ofstream audioFile(filname, std::ios::binary | std::ios::trunc);
 
 				int32_t current{ 0 };
 				for (int32_t loop = 0; loop < chunksCount; loop++) {
-					if (!audioDecoder(fileSizes[loop], (int8_t*)containers[chunksStart + audioChunks[loop]].data, (int8_t*)containerDataBuffer.GetContent() + header.headerSize + current)) {
+					bool success;
+					if (codec_flag == 1) {
+						success = audioDecoder_v40(fileSizes[loop], (int8_t*)containers[chunksStart + audioChunks[loop]].data, (int8_t*)containerDataBuffer.GetContent() + header.headerSize + current);
+					}
+					else {
+						success = audioDecoder_v41(fileSizes[loop], (int8_t*)containers[chunksStart + audioChunks[loop]].data, (int8_t*)containerDataBuffer.GetContent() + header.headerSize + current);
+					}
+
+					if (!success) {
 						status = ERRDECODEAUDIO;
 						return;
 					}
@@ -111,6 +122,8 @@ protected:
 	}
 
 	void processSingleAudio(const std::string& name, int32_t container) {
+		uint8_t* container_data = containers[container].data;
+		int16_t codec_flag = *(int16_t*)(container_data + 0x1A);
 		int32_t hertz = *(int32_t*)(containers[container].data + 28);
 		int32_t fileSize = *(int32_t*)(containers[container].data + 36);
 
@@ -118,9 +131,17 @@ protected:
 
 		containerDataBuffer.resize(fileSize + header.headerSize + 3);
 		//int8_t* toOutput = new int8_t[fileSize + header.headerSize + 3]; // extra bytes decoder overflow
-		memcpy(containerDataBuffer.GetContent(), header.StartChunkID, header.headerSize);
+		memcpy(containerDataBuffer.GetContent(), &header, header.headerSize);
 
-		if (!audioDecoder(fileSize, (int8_t*)containers[container].data, (int8_t*)containerDataBuffer.GetContent() + header.headerSize)) {
+		bool success;
+		if (codec_flag == 1) {
+			success = audioDecoder_v40(fileSize, (int8_t*)container_data, (int8_t*)containerDataBuffer.GetContent() + header.headerSize);
+		}
+		else {
+			success = audioDecoder_v41(fileSize, (int8_t*)container_data, (int8_t*)containerDataBuffer.GetContent() + header.headerSize);
+		}
+
+		if (!success) {
 			status = ERRDECODEAUDIO;
 			return;
 		}
