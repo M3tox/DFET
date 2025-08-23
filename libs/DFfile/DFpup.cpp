@@ -8,18 +8,26 @@ std::string DFpup::getHeaderInfo() {
 void DFpup::writeAllAudio() {
 
 	for (auto& p : pupData) {
+		uint8_t* container_data = containers[p.audioLocation].data;
+		int16_t codec_flag = *(int16_t*)(container_data + 0x1A);
 		int32_t hertz = *(int32_t*)(containers[p.audioLocation].data + 28);
 		int32_t fileSize = *(int32_t*)(containers[p.audioLocation].data + 36);
 
-		waveHeader header(fileSize, hertz, versionSig);
+		waveHeader header(fileSize, hertz, versionSig, (codec_flag == 1) ? 8 : 16);
 
 		containerDataBuffer.resize(fileSize + header.headerSize + 3);
 		//int8_t* toOutput = new int8_t[fileSize + header.headerSize];
-		memcpy(containerDataBuffer.GetContent(), header.StartChunkID, header.headerSize);
+		memcpy(containerDataBuffer.GetContent(), &header, header.headerSize);
 
-		uint8_t* test = containerDataBuffer.GetContent();
-		if (!audioDecoder(fileSize, (int8_t*)containers[p.audioLocation].data, (int8_t*)containerDataBuffer.GetContent() + header.headerSize)) {
-			status = ERRDECODEAUDIO;
+		bool success;
+		if (codec_flag == 1) {
+			success = audioDecoder_v40(fileSize, (int8_t*)container_data, (int8_t*)containerDataBuffer.GetContent() + header.headerSize);
+		}
+		else {
+			success = audioDecoder_v41(fileSize, (int8_t*)container_data, (int8_t*)containerDataBuffer.GetContent() + header.headerSize);
+		}
+
+		if (!success) {			status = ERRDECODEAUDIO;
 			return;
 		}
 

@@ -478,23 +478,34 @@ bool DFfile::writeAllAudioC(const std::string& path) {
 					hertz = hertzTmp;
 			}
 
+			// get codec flag from first chunk to determine format for the whole track
+			int16_t codec_flag = *(int16_t*)(containers[audioPtr->audioLoopChunks[0].chunkBlockID].data + 0x1A);
+
 			// construct audio name based on blockZero
 			std::string filname(path);
 			filname.push_back('/');
 			filname.append(audioPtr->trackName);
 			filname.append(".wav");
 
-			waveHeader header(totalFileSize, hertz, versionSig);
+			waveHeader header(totalFileSize, hertz, versionSig, (codec_flag == 1) ? 8 : 16);
 
 			containerDataBuffer.resize(totalFileSize + header.headerSize + 3);
 			//int8_t* toOutput = new int8_t[totalFileSize + header.headerSize + 3]; // 3 extra overflow decoder bytes
-			memcpy(containerDataBuffer.GetContent(), header.StartChunkID, header.headerSize);
+			memcpy(containerDataBuffer.GetContent(), &header, header.headerSize);
 
 			std::ofstream audioFile(filname, std::ios::binary | std::ios::trunc);
 
 			int32_t current{ 0 };
 			for (int32_t loop = 0; loop < audioPtr->totalLoopsChunks; loop++) {
-				if (!audioDecoder(fileSizes[loop], (int8_t*)containers[audioPtr->audioLoopChunks[audioPtr->chunkOrder[loop] - 1].chunkBlockID].data, (int8_t*)containerDataBuffer.GetContent() + header.headerSize + current)) {
+				bool success;
+				if (codec_flag == 1) {
+					success = audioDecoder_v40(fileSizes[loop], (int8_t*)containers[audioPtr->audioLoopChunks[audioPtr->chunkOrder[loop] - 1].chunkBlockID].data, (int8_t*)containerDataBuffer.GetContent() + header.headerSize + current);
+				}
+				else if (codec_flag == 2) {
+					success = audioDecoder_v41(fileSizes[loop], (int8_t*)containers[audioPtr->audioLoopChunks[audioPtr->chunkOrder[loop] - 1].chunkBlockID].data, (int8_t*)containerDataBuffer.GetContent() + header.headerSize + current);
+				}
+
+				if (!success) {
 					status = ERRDECODEAUDIO;
 					return false;
 				}
@@ -511,17 +522,27 @@ bool DFfile::writeAllAudioC(const std::string& path) {
 			for (int32_t shot = 0; shot < audioPtr->audioSingleChunkCount; shot++) {
 
 				int32_t blockID = audioPtr->audioSingleChunks[shot].chunkBlockID;
+				uint8_t* container_data = containers[blockID].data;
 
-				int32_t hertz = *(int32_t*)(containers[blockID].data + 28);
-				int32_t fileSize = *(int32_t*)(containers[blockID].data + 36);
+				int16_t codec_flag = *(int16_t*)(container_data + 0x1A);
+				int32_t hertz = *(int32_t*)(container_data + 28);
+				int32_t fileSize = *(int32_t*)(container_data + 36);
 
-				waveHeader header(fileSize, hertz, versionSig);
+				waveHeader header(fileSize, hertz, versionSig, (codec_flag == 1) ? 8 : 16);
 
 				containerDataBuffer.resize(fileSize + header.headerSize + 3);
 				//int8_t* toOutput = new int8_t[fileSize + header.headerSize + 3]; // extra bytes decoder overflow
-				memcpy(containerDataBuffer.GetContent(), header.StartChunkID, header.headerSize);
+				memcpy(containerDataBuffer.GetContent(), &header, header.headerSize);
 
-				if (!audioDecoder(fileSize, (int8_t*)containers[blockID].data, (int8_t*)containerDataBuffer.GetContent() + header.headerSize)) {
+				bool success;
+				if (codec_flag == 1) {
+					success = audioDecoder_v40(fileSize, (int8_t*)container_data, (int8_t*)containerDataBuffer.GetContent() + header.headerSize);
+				}
+				else {
+					success = audioDecoder_v41(fileSize, (int8_t*)container_data, (int8_t*)containerDataBuffer.GetContent() + header.headerSize);
+				}
+
+				if (!success) {
 					status = ERRDECODEAUDIO;
 					return false;
 				}
@@ -553,7 +574,7 @@ bool DFfile::writeAllAudioC(const std::string& path) {
 
 // audio decoder decompress the file to readable DCP
 // Function was refactored after version 0.89, less allocations, less castings, easier to understand and maintain.
-bool DFfile::audioDecoder(int32_t& uncomprBlockSize, int8_t* soundContainer, int8_t* decodedOutput) {
+bool DFfile::audioDecoder_v40(int32_t& uncomprBlockSize, int8_t* soundContainer, int8_t* decodedOutput) {
 
 	static constexpr int8_t StepSizeTable[256]{
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -655,6 +676,32 @@ bool DFfile::audioDecoder(int32_t& uncomprBlockSize, int8_t* soundContainer, int
 		return false;
 	}
 	return true;
+}
+
+bool DFfile::audioDecoder_v41(int32_t& uncomprBlockSize, int8_t* soundContainer, int8_t* decodedOutput) {
+	int16_t* out_ptr = (int16_t*)decodedOutput;
+	int num_samples = uncomprBlockSize / 2;
+
+	uint8_t* in_ptr = (uint8_t*)soundContainer + *(int32_t*)(soundContainer + 44);
+
+	int16_t current_sample = 0;
+
+	for (int i = 0; i < num_samples; i++) {
+		uint8_t input_byte = in_ptr[i];
+
+		if ((input_byte & 0x80) == 0) {
+			// High bit is 0: it's a delta value.
+			int16_t delta = (input_byte << 9);
+			delta >>= 4; // Sign-extend and scale
+			current_sample += delta;
+		}
+		else {
+			// High bit is 1: it's a new absolute value.
+			current_sample = (input_byte << 9); // Sign-extend to 16 bits
+		}
+		out_ptr[i] = current_sample;
+	}
+	return true; // Success
 }
 
 // Function completly rewritten since DFET version 0.89! Shorter, faster and more reliant
