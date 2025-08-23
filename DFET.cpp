@@ -1,5 +1,13 @@
 #define MDEFTVERSION "0.89"	// make sure its always 4 characters!
 
+#if defined(_WIN32) && defined(DFET_GUI_MODE)
+
+// ===================================================================================
+//
+// WINDOWS GUI MODE
+//
+// ===================================================================================
+
 #include <Windows.h>
 
 #include "resource.h"
@@ -306,3 +314,176 @@ static std::string browseDir(HWND hWnd) {
 
 	return std::string();
 }
+
+#elif defined(DFET_CLI_MODE)
+
+// ===================================================================================
+//
+// CLI MODE
+//
+// ===================================================================================
+
+#include <iostream>
+#include <string>
+#include <vector>
+#include <filesystem>
+#include <stdexcept>
+#include "libs/DFfile/DFlib.h"
+
+#if defined(_WIN32)
+#include <Windows.h>
+#endif
+
+void print_help() {
+    std::cout << "DFET - DreamFactory Extraction Tool v" << MDEFTVERSION << "\n";
+    std::cout << "Usage: dfet <input_file> [options]\n\n";
+    std::cout << "Options:\n";
+    std::cout << "  -o <output_dir>  Specify custom output directory (default: same as input file).\n";
+    std::cout << "  -s               Extract scripts (default: on).\n";
+    std::cout << "  -a               Extract audio (default: on).\n";
+    std::cout << "  -f               Extract frames (default: on).\n";
+    std::cout << "  -d               Extract raw container data (default: off).\n";
+    std::cout << "  -v               Print verbose file information.\n";
+    std::cout << "  -h, --help       Show this help message.\n\n";
+    std::cout << "Example: dfet mygame.set -o extracted_files -a -f\n";
+    std::cout << "Supported file types: BOOTFILE, PUP, SET, MOV, TRK, SND, SFX, 11K, STG, CST, SHP.\n";
+}
+
+int main(int argc, char* argv[]) {
+
+#if defined(_WIN32)
+
+    if (GetConsoleWindow() == NULL) {
+        if (AllocConsole()) {
+            FILE* fp;
+            // Redirect standard streams to the new console
+            freopen_s(&fp, "CONOUT$", "w", stdout);
+            freopen_s(&fp, "CONOUT$", "w", stderr);
+            freopen_s(&fp, "CONIN$", "r", stdin);
+        }
+    }
+
+#endif
+
+    if (argc < 2) {
+        print_help();
+        return 0;
+    }
+
+    std::string input_file_path;
+    std::string output_dir_param;
+    bool extract_scripts = true;
+    bool extract_audio = true;
+    bool extract_frames = true;
+    bool extract_raw_data = false;
+    bool verbose_info = false;
+
+    // Parse command-line arguments
+    for (int i = 1; i < argc; ++i) {
+        std::string arg = argv[i];
+        if (arg == "-h" || arg == "--help") { print_help(); return 0; }
+        else if (arg == "-o") { if (i + 1 < argc) { output_dir_param = argv[++i]; } else { std::cerr << "Error: -o option requires an argument.\n"; return 1; } }
+        else if (arg == "-s") { extract_scripts = true; }
+        else if (arg == "-a") { extract_audio = true; }
+        else if (arg == "-f") { extract_frames = true; }
+        else if (arg == "-d") { extract_raw_data = true; }
+        else if (arg == "-v") { verbose_info = true; }
+        else if (input_file_path.empty()) { input_file_path = arg; }
+        else { std::cerr << "Error: Unknown argument or duplicate input file: " << arg << "\n"; return 1; }
+    }
+
+    if (input_file_path.empty()) { std::cerr << "Error: No input file specified.\n"; print_help(); return 1; }
+
+    DFfile* df_instance = nullptr;
+    int32_t error_code = readDFfile(df_instance, input_file_path);
+    if (error_code != 0 || !df_instance) { // Use 0 for NOERRORS
+        std::cerr << "Error reading file: " << DFfile::getErrorMsg(error_code) << "\n";
+        if (df_instance) delete df_instance;
+        return 1;
+    }
+
+    try {
+        std::string final_output_path = output_dir_param.empty() ? std::filesystem::path(input_file_path).parent_path().string() : output_dir_param;
+        std::string base_filename = std::filesystem::path(input_file_path).stem().string();
+        std::string specific_output_folder = final_output_path + "/_" + base_filename;
+        std::filesystem::create_directories(specific_output_folder);
+        df_instance->outPutPath.assign(specific_output_folder);
+
+        std::cout << "Processing file: " << input_file_path << "\n";
+        std::cout << "Output directory: " << specific_output_folder << "\n";
+
+        if (verbose_info) {
+            std::cout << "\n--- Header Info ---\n" << df_instance->getHeaderInfo() << "\n";
+            std::cout << "--- Container Info ---\n" << df_instance->getContainerInfo() << "\n";
+        }
+
+        uint32_t total_files_extracted = 0;
+
+        if (extract_scripts) {
+            df_instance->fileCounter = 0;
+            df_instance->writeAllScripts();
+            if (df_instance->fileCounter > 0) {
+                std::cout << "Extracted " << df_instance->fileCounter << " scripts.\n";
+                total_files_extracted += df_instance->fileCounter;
+            }
+            else {
+                std::cout << "No scripts detected or extracted.\n";
+            }
+        }
+
+        if (extract_audio) {
+            df_instance->fileCounter = 0;
+            df_instance->writeAllAudio();
+            if (df_instance->fileCounter > 0) {
+                std::cout << "Extracted " << df_instance->fileCounter << " audio files.\n";
+                total_files_extracted += df_instance->fileCounter;
+            }
+            else {
+                std::cout << "No audio detected or extracted.\n";
+            }
+        }
+
+        if (extract_frames) {
+            df_instance->fileCounter = 0;
+            df_instance->writeAllFrames();
+            if (df_instance->fileCounter > 0) {
+                std::cout << "Extracted " << df_instance->fileCounter << " frames.\n";
+                total_files_extracted += df_instance->fileCounter;
+            }
+            else {
+                std::cout << "No frames detected or extracted.\n";
+            }
+        }
+
+        if (extract_raw_data) {
+            std::string raw_output_path = specific_output_folder + "/_RAW_CONTAINERS";
+            std::filesystem::create_directories(raw_output_path);
+            df_instance->writeContainersToFiles(raw_output_path);
+            std::cout << "Extracted " << df_instance->containers.size() << " raw containers.\n";
+        }
+
+        // Final summary
+        if (total_files_extracted == 0 && !extract_raw_data) {
+            std::cout << "Extraction complete. Nothing was extracted based on the selected options.\n";
+        }
+        else {
+            std::cout << "Extraction complete. Total files: " << total_files_extracted << "\n";
+        }
+
+    }
+    catch (const std::filesystem::filesystem_error& e) {
+        std::cerr << "Filesystem error: " << e.what() << "\n";
+        delete df_instance;
+        return 1;
+    }
+    catch (const std::exception& e) {
+        std::cerr << "A general runtime error occurred: " << e.what() << "\n";
+        delete df_instance;
+        return 1;
+    }
+
+    delete df_instance;
+    return 0;
+}
+
+#endif
