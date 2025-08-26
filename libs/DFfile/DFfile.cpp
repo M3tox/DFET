@@ -453,6 +453,52 @@ uint8_t DFfile::swapEndians(float& dest, uint8_t* source) {
 	return  sizeof(float);
 }
 
+bool DFfile::writeWavFromContainer(const std::string& path, const std::string& name, int32_t containerId) {
+	uint8_t* container_data = containers[containerId].data;
+
+	int16_t codec_flag = *(int16_t*)(container_data + 0x1A);
+	int32_t hertz = *(int32_t*)(container_data + 28);
+	int32_t fileSize = *(int32_t*)(container_data + 36);
+
+	waveHeader header(fileSize, hertz, versionSig, (codec_flag == 1) ? 8 : 16);
+
+	containerDataBuffer.resize(fileSize + header.headerSize + 3);
+	//int8_t* toOutput = new int8_t[fileSize + header.headerSize + 3]; // extra bytes decoder overflow
+	memcpy(containerDataBuffer.GetContent(), &header, header.headerSize);
+
+	bool success;
+	if (codec_flag == 1) {
+		success = audioDecoder_v40(fileSize, (int8_t*)container_data, (int8_t*)containerDataBuffer.GetContent() + header.headerSize);
+	}
+	else {
+		success = audioDecoder_v41(fileSize, (int8_t*)container_data, (int8_t*)containerDataBuffer.GetContent() + header.headerSize);
+	}
+
+	if (!success) {
+		status = ERRDECODEAUDIO;
+		return false;
+	}
+
+	std::string filname(path);
+	filname.push_back('/');
+	// sometimes they have subfolders. detect those and ignore them
+	std::string temp(name);
+	std::string::size_type pos = temp.find('/');
+	if (pos == std::string::npos) {
+		filname.append(temp);
+	}
+	else
+		filname.append(temp.substr(pos + 1));
+
+	filname.append(".wav");
+
+	std::ofstream file(filname, std::ios::binary | std::ios::trunc);
+	file.write((char*)containerDataBuffer.GetContent(), fileSize + 44);
+	file.close();
+	fileCounter++;
+	return true;
+}
+
 bool DFfile::writeAllAudioC(const std::string& path) {
 
 	// first check, if this file has audio data anyway (sometimes they dont)
@@ -517,60 +563,18 @@ bool DFfile::writeAllAudioC(const std::string& path) {
 			delete[] fileSizes;
 		}
 
-		
-
 			for (int32_t shot = 0; shot < audioPtr->audioSingleChunkCount; shot++) {
-
-				int32_t blockID = audioPtr->audioSingleChunks[shot].chunkBlockID;
-				uint8_t* container_data = containers[blockID].data;
-
-				int16_t codec_flag = *(int16_t*)(container_data + 0x1A);
-				int32_t hertz = *(int32_t*)(container_data + 28);
-				int32_t fileSize = *(int32_t*)(container_data + 36);
-
-				waveHeader header(fileSize, hertz, versionSig, (codec_flag == 1) ? 8 : 16);
-
-				containerDataBuffer.resize(fileSize + header.headerSize + 3);
-				//int8_t* toOutput = new int8_t[fileSize + header.headerSize + 3]; // extra bytes decoder overflow
-				memcpy(containerDataBuffer.GetContent(), &header, header.headerSize);
-
-				bool success;
-				if (codec_flag == 1) {
-					success = audioDecoder_v40(fileSize, (int8_t*)container_data, (int8_t*)containerDataBuffer.GetContent() + header.headerSize);
-				}
-				else {
-					success = audioDecoder_v41(fileSize, (int8_t*)container_data, (int8_t*)containerDataBuffer.GetContent() + header.headerSize);
-				}
-
-				if (!success) {
-					status = ERRDECODEAUDIO;
+				if (!writeWavFromContainer(path, audioPtr->audioSingleChunks[shot].identifier, audioPtr->audioSingleChunks[shot].chunkBlockID)) {
 					return false;
 				}
-
-				std::string filname(path);
-				filname.push_back('/');
-				// sometimes they have subfolders. detect those and ignore them
-				std::string temp(audioPtr->audioSingleChunks[shot].identifier);
-				std::string::size_type pos = temp.find('/');
-				if (pos == std::string::npos) {
-					filname.append(temp);
-				}
-				else
-					filname.append(temp.substr(pos + 1));
-
-				filname.append(".wav");
-
-				std::ofstream file(filname, std::ios::binary | std::ios::trunc);
-				file.write((char*)containerDataBuffer.GetContent(), fileSize + 44);
-				file.close();
-				fileCounter++;
 			}
-		
+
 	}
 
 	// operation succesful
 	return true;
 }
+
 
 // audio decoder decompress the file to readable DCP
 // Function was refactored after version 0.89, less allocations, less castings, easier to understand and maintain.

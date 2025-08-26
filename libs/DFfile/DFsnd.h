@@ -122,46 +122,8 @@ protected:
 	}
 
 	void processSingleAudio(const std::string& name, int32_t container) {
-		uint8_t* container_data = containers[container].data;
-		int16_t codec_flag = *(int16_t*)(container_data + 0x1A);
-		int32_t hertz = *(int32_t*)(containers[container].data + 28);
-		int32_t fileSize = *(int32_t*)(containers[container].data + 36);
-
-		waveHeader header(fileSize, hertz, versionSig);
-
-		containerDataBuffer.resize(fileSize + header.headerSize + 3);
-		//int8_t* toOutput = new int8_t[fileSize + header.headerSize + 3]; // extra bytes decoder overflow
-		memcpy(containerDataBuffer.GetContent(), &header, header.headerSize);
-
-		bool success;
-		if (codec_flag == 1) {
-			success = audioDecoder_v40(fileSize, (int8_t*)container_data, (int8_t*)containerDataBuffer.GetContent() + header.headerSize);
+		if (!writeWavFromContainer(outPutPath, name, container)) {
+			// status is set by the helper function
 		}
-		else {
-			success = audioDecoder_v41(fileSize, (int8_t*)container_data, (int8_t*)containerDataBuffer.GetContent() + header.headerSize);
-		}
-
-		if (!success) {
-			status = ERRDECODEAUDIO;
-			return;
-		}
-
-		std::string filname(outPutPath);
-		filname.push_back('/');
-		// sometimes they have subfolders. detect those and ignore them
-		std::string temp(name);
-		std::string::size_type pos = temp.find('/');
-		if (pos == std::string::npos) {
-			filname.append(temp);
-		}
-		else
-			filname.append(temp.substr(pos + 1));
-
-		filname.append(".wav");
-
-		std::ofstream fileOut(filname, std::ios::binary | std::ios::trunc);
-		fileOut.write((char*)containerDataBuffer.GetContent(), fileSize + 44);
-		fileOut.close();
-		fileCounter++;
 	}
 };

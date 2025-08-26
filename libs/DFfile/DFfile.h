@@ -565,8 +565,11 @@ protected:
 
 	int32_t readFileIntoMemory(const std::string& fileLocation);
 
+	bool writeWavFromContainer(const std::string& path, const std::string& name, int32_t containerId);
+
 	bool audioDecoder_v40(int32_t& uncompressedSize, int8_t* soundFile, int8_t* decodedOutput);
-	bool audioDecoder_v41(int32_t& uncompressedSize, int8_t* soundFile, int8_t* decodedOutput);	bool getRawImageData(DFfile::Container& container, bool& zImage, int16_t& height, int16_t& width);
+	bool audioDecoder_v41(int32_t& uncompressedSize, int8_t* soundFile, int8_t* decodedOutput);
+	bool getRawImageData(DFfile::Container& container, bool& zImage, int16_t& height, int16_t& width);
 	virtual int32_t initContainerData() = 0;
 
 

@@ -8,39 +8,13 @@ std::string DFpup::getHeaderInfo() {
 void DFpup::writeAllAudio() {
 
 	for (auto& p : pupData) {
-		uint8_t* container_data = containers[p.audioLocation].data;
-		int16_t codec_flag = *(int16_t*)(container_data + 0x1A);
-		int32_t hertz = *(int32_t*)(containers[p.audioLocation].data + 28);
-		int32_t fileSize = *(int32_t*)(containers[p.audioLocation].data + 36);
-
-		waveHeader header(fileSize, hertz, versionSig, (codec_flag == 1) ? 8 : 16);
-
-		containerDataBuffer.resize(fileSize + header.headerSize + 3);
-		//int8_t* toOutput = new int8_t[fileSize + header.headerSize];
-		memcpy(containerDataBuffer.GetContent(), &header, header.headerSize);
-
-		bool success;
-		if (codec_flag == 1) {
-			success = audioDecoder_v40(fileSize, (int8_t*)container_data, (int8_t*)containerDataBuffer.GetContent() + header.headerSize);
-		}
-		else {
-			success = audioDecoder_v41(fileSize, (int8_t*)container_data, (int8_t*)containerDataBuffer.GetContent() + header.headerSize);
-		}
-
-		if (!success) {			status = ERRDECODEAUDIO;
-			return;
-		}
-
 		std::string out(outPutPath);
 		out.append("/AUDIO");
 		std::filesystem::create_directory(out);
-		out.push_back('/');
-		out.append(p.ident);
-		out.append(".wav");
-		std::ofstream file(out, std::ios::binary | std::ios::trunc);
-		file.write((char*)containerDataBuffer.GetContent(), fileSize + header.headerSize);
-		file.close();
-		fileCounter++;
+
+		if (!writeWavFromContainer(out, p.ident, p.audioLocation)) {
+			return;
+		}
 	}
 
 	// little extra: output dialoug as textfile as well
