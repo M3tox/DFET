@@ -228,8 +228,21 @@ protected:
 			else {
 				chunkInfo2Loc = *(int32_t*)(inst->containers[0].data + 32);
 				uint8_t strSize = *(uint8_t*)(inst->containers[0].data + 36);
-				memcpy(trackName, (inst->containers[0].data + 37), 16);
-				trackName[strSize - 4] = '\0';	// minus 4 because I dont want the suffix
+
+				size_t nameLength = strSize;
+				if (nameLength > 31)
+					nameLength = 31;
+				memcpy(trackName, (inst->containers[0].data + 37), nameLength);
+				trackName[nameLength] = '\0';
+
+				size_t len = strlen(trackName);
+				if (len >= 4) {
+					const char* ext = trackName + len - 4;
+					if (tolower(ext[0]) == '.' && tolower(ext[1]) == 'w' &&
+						tolower(ext[2]) == 'a' && tolower(ext[3]) == 'v') {
+						trackName[len - 4] = '\0'; // Trim the extension.
+						}
+				}
 			}
 
 
