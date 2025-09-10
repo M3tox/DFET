@@ -1,4 +1,5 @@
 #include "DFfile.h"
+#include <algorithm>
 
 DFfile::DFfile(const std::string& currentFileName, int8_t fileType) :
 	currentFileName(currentFileName), fileType(fileType) {};
@@ -128,9 +129,34 @@ void DFfile::writeContainersToFiles(const std::string& path) {
 		std::string FileName(path);
 		FileName.push_back('/');
 		if (fileType != DFBOOTFILE) {
-			FileName.append(currentFileName.substr(0, currentFileName.length()-4));
-		} else
+			std::string baseName = currentFileName;
+			size_t dot_pos = baseName.rfind('.');
+
+			// Only trim the extension if it's a known type
+			if (dot_pos != std::string::npos) {
+				std::string ext = baseName.substr(dot_pos);
+
+				std::transform(ext.begin(), ext.end(), ext.begin(),
+					[](unsigned char c){ return std::tolower(c); });
+
+				const std::vector<std::string> knownExtensions = { ".dta", ".wav", ".txt", ".bmp", ".png", ".csv" };
+				bool isKnownExt = false;
+				for (const auto& knownExt : knownExtensions) {
+					if (ext == knownExt) {
+						isKnownExt = true;
+						break;
+					}
+				}
+
+				if (isKnownExt) {
+					baseName = baseName.substr(0, dot_pos);
+				}
+			}
+			FileName.append(baseName);
+		} else {
 			FileName.append(currentFileName);
+		}
+
 		FileName.push_back('_');
 		FileName.append("container ");
 		FileName.append(std::to_string(container));
